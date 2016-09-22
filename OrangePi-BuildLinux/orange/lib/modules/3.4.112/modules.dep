@@ -24,6 +24,7 @@ kernel/drivers/net/wireless/rtlwifi/rtl8192c/rtl8192c-common.ko: kernel/net/mac8
 kernel/drivers/net/wireless/rtlwifi/rtl8192cu/rtl8192cu.ko: kernel/drivers/net/wireless/rtlwifi/rtlwifi.ko kernel/drivers/net/wireless/rtlwifi/rtl8192c/rtl8192c-common.ko kernel/net/mac80211/mac80211.ko
 kernel/drivers/net/wireless/rtl8188eu/8188eu.ko:
 kernel/drivers/net/wireless/rtl8189ES_linux/8189es.ko:
+kernel/drivers/net/wireless/rtl8189fs/8189fs.ko:
 kernel/drivers/net/wireless/rtl8723bs/8723bs.ko:
 kernel/drivers/net/wireless/zd1201.ko:
 kernel/drivers/net/wireless/rt2x00/rt2x00lib.ko: kernel/net/mac80211/mac80211.ko

@@ -154,6 +154,7 @@ alias usb:v07B8p8179d*dc*dsc*dp*ic*isc*ip* 8188eu
 alias usb:v0BDAp0179d*dc*dsc*dp*ic*isc*ip* 8188eu
 alias usb:v0BDAp8179d*dc*dsc*dp*ic*isc*ip* 8188eu
 alias sdio:c*v024Cd8179* 8189es
+alias sdio:c*v024CdF179* 8189fs
 alias usb:v1044p8005d*dc*dsc*dp*ic*isc*ip* zd1201
 alias usb:v1044p8004d*dc*dsc*dp*ic*isc*ip* zd1201
 alias usb:v0DB0p6823d*dc*dsc*dp*ic*isc*ip* zd1201

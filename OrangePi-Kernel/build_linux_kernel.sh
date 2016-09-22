@@ -2,10 +2,14 @@
 
 # === USAGE ===========================================
 # build_linux_kernel <board> [clean]
-# <board> = 2     ->  build for OPI-2/OPI-PC
-# <board> = plus  ->  build for OPI-PLUS
-# <board> = all   ->  build for OPI-2/OPI-PC & OPI-PLUS
-# <board> = clean ->  clean all
+# <board> = 2         ->  build for OPI-2/OPI-PC
+# <board> = plus      ->  build for OPI-PLUS
+# <board> = lite      ->  build for OPI-LITE
+# <board> = one       ->  build for OPI-ONE
+# <board> = pc plus   ->  build for OPI-PC PLUS
+# <board> = plus 2e   ->  build for OPI-PLUS 2E
+# <board> = all       ->  build for OPI-2/OPI-PC & OPI-PLUS
+# <board> = clean     ->  clean all
 # if 2nd parameter is clean, cleans all before build
 # =====================================================
 # After build uImage and lib are in build directory

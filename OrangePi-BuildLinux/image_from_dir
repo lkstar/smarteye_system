@@ -19,21 +19,21 @@ cd $_DIR
 # ===================================================
 if [ "${1}" = "" ]; then
     echo "Source directory not specified."
-    echo "USAGE: image_from_dir <directory> <img_name | /dev/sdX> [noformat] [opi-2|opi-PC|opi-plus]"
+    echo "USAGE: image_from_dir <directory> <img_name | /dev/sdX> [noformat] [opi-2|opi-PC|opi-plus|opi-one|opi-lite|opi-pcplus|opi-plus2e]"
     exit 0
 fi
 
 if [ "${2}" = "" ]; then
     echo "Destination not specified."
-    echo "USAGE: image_from_dir <directory> <img_name | /dev/sdX> [noformat] [opi-2|opi-PC|opi-plus]"
+    echo "USAGE: image_from_dir <directory> <img_name | /dev/sdX> [noformat] [opi-2|opi-PC|opi-plus|opi-one|opi-lite|opi-pcplus|opi-plus2e]"
     exit 0
 fi
 
-idir=$1              #linux-trusty
+idir=$1             
 
 if [ ! -d $idir ]; then
     echo "Source directory not found."
-    echo "USAGE: image_from_dir <directory> <img_name | /dev/sdX> [noformat] [opi-2|opi-PC|opi-plus]"
+    echo "USAGE: image_from_dir <directory> <img_name | /dev/sdX> [noformat] [opi-2|opi-PC|opi-plus|opi-one|opi-lite|opi-pcplus|opi-plus2e]"
     exit 0
 fi
 # ===================================================
@@ -43,10 +43,10 @@ fi
 # ********************************************************
 # Linux partition size IS CALCULATED from directory size *
 # ********************************************************
-_ext4size=`du -s $1 | awk '{print $1}'`        #1126244
-ext4sizeMB=$(expr $_ext4size / 1024)           #1100
-ext4size=$(expr $ext4sizeMB / 2 + $ext4sizeMB) #1650
-linuxsize=$(expr $ext4sizeMB + 500)            #1600
+_ext4size=`du -s $1 | awk '{print $1}'` 
+ext4sizeMB=$(expr $_ext4size / 1024)        
+ext4size=$(expr $ext4sizeMB / 2 + $ext4sizeMB) 
+linuxsize=$(expr $ext4sizeMB + 500)            
 
 _boot_on_ext4="no"
 
@@ -64,22 +64,22 @@ fi
 # === Show info ===============
 echo ""
 echo "==== Info ===="
-echo "    from: $idir"       #文件系统的目录
-echo "      to: $sdcard"     #镜像的名字
+echo "    from: $idir"       
+echo "      to: $sdcard"     
 #echo "ext4boot: $_boot_on_ext4"
 if [ "${_format}" = "btrfs" ] ; then
     echo "   btrfs: yes"
 else
     echo "   btrfs: no"
 fi
-echo "dir size: $ext4sizeMB MB" #文件系统的大小
-echo "img size: $linuxsize MB"  #装文件系统分区的大小比文件系统大了500M
+echo "dir size: $ext4sizeMB MB" 
+echo "img size: $linuxsize MB"  
 echo "=============="
 echo ""
 
 # -------------------------------------------------------------------
     
-if [ ! "${_boot_on_ext4}" = "yes" ] ; then        #bootdir=boot-trusty  存放script.bin和uImage
+if [ ! "${_boot_on_ext4}" = "yes" ] ; then      
     if [ ! -d $bootdir ]; then
 	mkdir -p $bootdir
     fi
@@ -88,7 +88,7 @@ if [ ! "${_boot_on_ext4}" = "yes" ] ; then        #bootdir=boot-trusty  存放sc
     umount $bootdir > /dev/null 2>&1
 fi
 
-if [ ! -d $odir ]; then                           #odir=linux-trusty  存放文件系统
+if [ ! -d $odir ]; then                 
     mkdir -p $odir
 fi
 rm -rf $odir/* > /dev/null 2>&1
@@ -100,7 +100,7 @@ sleep 1
 # MOUNT PARTITIONS
 # ================
 
-if [ "${_format}" = "btrfs" ] ; then             #_format=ext4
+if [ "${_format}" = "btrfs" ] ; then             
     _mntopt="-o compress-force=lzo"
 else
     _mntopt=""
@@ -109,7 +109,7 @@ fi
 echo ""
 echo "Mounting SD Card partitions..."
 
-if [ ! "${_boot_on_ext4}" = "yes" ] ; then      #_boot_on_ext4=no
+if [ ! "${_boot_on_ext4}" = "yes" ] ; then      
     if ! mount ${sdcard}1 $bootdir; then
 	echo "ERROR mounting fat partitions..."
 	exit 1
@@ -165,7 +165,7 @@ if [ "${3}" = "opi-2" ] || [ "${4}" = "opi-2" ]; then
     cp orange/script.bin.OPI-2_* $odir/boot > /dev/null 2>&1
     if [ ! "${_boot_on_ext4}" = "yes" ] ; then
         cp orange/uImage_OPI-2 $bootdir/uImage > /dev/null 2>&1
-        cp orange/script.bin.OPI-2_1080p60_hdmi $bootdir/script.bin > /dev/null 2>&1
+        cp orange/script.bin.OPI-2_720p60_hdmi $bootdir/script.bin > /dev/null 2>&1
         cp orange/script.bin.OPI-2_* $bootdir > /dev/null 2>&1
     fi
 elif [ "${3}" = "opi-pc" ] || [ "${4}" = "opi-pc" ]; then
@@ -173,7 +173,7 @@ elif [ "${3}" = "opi-pc" ] || [ "${4}" = "opi-pc" ]; then
     cp orange/script.bin.OPI-PC_* $odir/boot > /dev/null 2>&1
     if [ ! "${_boot_on_ext4}" = "yes" ] ; then
         cp orange/uImage_OPI-2 $bootdir/uImage > /dev/null 2>&1
-        cp orange/script.bin.OPI-PC_1080p60_hdmi $bootdir/script.bin > /dev/null 2>&1
+        cp orange/script.bin.OPI-PC_720p60_hdmi $bootdir/script.bin > /dev/null 2>&1
         cp orange/script.bin.OPI-PC_* $bootdir > /dev/null 2>&1
     fi
 elif [ "${3}" = "opi-plus" ] || [ "${4}" = "opi-plus" ]; then
@@ -181,8 +181,39 @@ elif [ "${3}" = "opi-plus" ] || [ "${4}" = "opi-plus" ]; then
     cp orange/script.bin.OPI-PLUS_* $odir/boot > /dev/null 2>&1
     if [ ! "${_boot_on_ext4}" = "yes" ] ; then
         cp orange/uImage_OPI-PLUS $bootdir/uImage > /dev/null 2>&1
-        cp orange/script.bin.OPI-PLUS_1080p60_hdmi $bootdir/script.bin > /dev/null 2>&1
+        cp orange/script.bin.OPI-PLUS_720p60_hdmi $bootdir/script.bin > /dev/null 2>&1
         cp orange/script.bin.OPI-PLUS_* $bootdir > /dev/null 2>&1
+    fi
+elif [ "${3}" = "opi-one" ] || [ "${4}" = "opi-one" ]; then
+    cp orange/uImage_OPI-2 $odir/boot/uImage > /dev/null 2>&1
+    cp orange/script.bin.OPI-ONE_* $odir/boot > /dev/null 2>&1
+    if [ ! "${_boot_on_ext4}" = "yes" ] ; then
+        cp orange/uImage_OPI-2 $bootdir/uImage > /dev/null 2>&1
+        cp orange/script.bin.OPI-ONE_720p_hdmi $bootdir/script.bin > /dev/null 2>&1
+    fi
+elif [ "${3}" = "opi-lite" ] || [ "${4}" = "opi-lite" ]; then
+    cp orange/uImage_OPI-2 $odir/boot/uImage > /dev/null 2>&1
+    cp orange/script.bin.OPI-LITE_* $odir/boot > /dev/null 2>&1
+    if [ ! "${_boot_on_ext4}" = "yes" ] ; then
+        cp orange/uImage_OPI-2 $bootdir/uImage > /dev/null 2>&1
+        cp orange/script.bin.OPI-LITE_720p_hdmi $bootdir/script.bin > /dev/null 2>&1
+        sed -i '/8189es/c8189fs'  $odir/etc/modules 
+    fi
+elif [ "${3}" = "opi-pcplus" ] || [ "${4}" = "opi-pcplus" ]; then
+    cp orange/uImage_OPI-2 $odir/boot/uImage > /dev/null 2>&1
+    cp orange/script.bin.OPI-PCPLUS_* $odir/boot > /dev/null 2>&1
+    if [ ! "${_boot_on_ext4}" = "yes" ] ; then
+        cp orange/uImage_OPI-2 $bootdir/uImage > /dev/null 2>&1
+        cp orange/script.bin.OPI-PCPLUS_720p_hdmi $bootdir/script.bin > /dev/null 2>&1
+        sed -i '/8189es/c8189fs'  $odir/etc/modules 
+    fi
+elif [ "${3}" = "opi-plus2e" ] || [ "${4}" = "opi-plus2e" ]; then
+    cp orange/uImage_OPI-PLUS $odir/boot/uImage > /dev/null 2>&1
+    cp orange/script.bin.OPI-PLUS2E_* $odir/boot > /dev/null 2>&1
+    if [ ! "${_boot_on_ext4}" = "yes" ] ; then
+        cp orange/uImage_OPI-PLUS $bootdir/uImage > /dev/null 2>&1
+        cp orange/script.bin.OPI-PLUS2E_720p_hdmi $bootdir/script.bin > /dev/null 2>&1
+        sed -i '/8189es/c8189fs'  $odir/etc/modules 
     fi
 else
     cp orange/uImage_OPI-2 $odir/boot/uImage > /dev/null 2>&1

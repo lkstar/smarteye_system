@@ -1,3 +1,9 @@
+
+sudo apt-get update
+sudo apt-get upgrade
+
+sudo apt-get install build-essential u-boot-tools binutils-arm-linux-gnueabihf gcc-4.7-arm-linux-gnueabihf-base g++-4.7-arm-linux-gnueabihf gcc-arm-linux-gnueabihf cpp-arm-linux-gnueabihf libusb-1.0-0 libusb-1.0-0-dev git wget fakeroot kernel-package zlib1g-dev libncurses5-dev pkg-config
+
 #The OrangePi-Kernel contains Linux kernel sources (3.4.112) adapted for OrangePI H3 boards, gcc toolchain
 #The script "build_linux_kernel.sh" can be used to build the kernel
 

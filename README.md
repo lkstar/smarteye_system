@@ -6,8 +6,13 @@
 #$ cd OrangePI-Kernel
 ##cleans the kernel tree before build
 #$ sudo ./build_linux_kernel.sh clean clean   
-##builds the uImage for OPI-PLUS(only two uImage,just plus,pi2),plus,plus2,plus2E use same uIamge,others use pi2 uImage                    
-#$ sudo ./build_linux_kernel.sh plus                              
+##builds the uImage for OPI-PLUS(only two uImage,just plus,pi2),plus,plus2,plus2E use same uIamge,others use pi2 uImage
+#clean as 1st parameter cleans the kernel tree and build directories
+#clean as 2nd parameter cleans the kernel tree before build
+#all builds the uImage for OPI-2 & OPI-PLUS
+#2 builds the uImage for OPI-2 OPI-PCPLUS OPI-ONE OPI-PC
+#plus builds the uImage for OPI-PLUS OPI-PLUS2E                    
+#$ sudo ./build_linux_kernel.sh 2                              
 #$ cd ../OrangePi-BuildLinux  
 ##build file system
 #$ sudo ./create_image    

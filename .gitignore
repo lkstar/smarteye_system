@@ -128,3 +128,5 @@ OrangePi-BuildLinux/linux-trusty/
 update.sh
 download.sh
 vmlinux
+System.map
+orangepi-Kernel/linux-3.4.112/output

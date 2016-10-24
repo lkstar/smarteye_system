@@ -18,12 +18,13 @@ echo "Log File Name: $ROOT_DIR/$LOG_FILE_OK"
 echo "#################################################################################"
 echo " "
 
-touch $ROOT_DIR/$LOG_FILE_OK
+#touch $ROOT_DIR/$LOG_FILE_OK
 
 cd $KERNEL_DIR
 echo "Enter Director: $KERNEL_DIR"
 
-sudo ./build_linux_kernel.sh clean clean >> $ROOT_DIR/$LOG_FILE_OK
+#sudo ./build_linux_kernel.sh clean clean >> $ROOT_DIR/$LOG_FILE_OK
+sudo ./build_linux_kernel.sh clean clean
 if [ $? -eq 0 ] ; then
     echo "[OK  ] sudo ./build_linux_kernel.sh clean clean "
 else
@@ -34,7 +35,8 @@ else
 fi
 
 
-sudo ./build_linux_kernel.sh 2 clean >> $ROOT_DIR/$LOG_FILE_OK
+#sudo ./build_linux_kernel.sh 2 clean >> $ROOT_DIR/$LOG_FILE_OK
+sudo ./build_linux_kernel.sh 2 clean 
 if [ $? -eq 0 ] ; then
     echo "[OK  ] sudo ./build_linux_kernel.sh 2 "
 else
@@ -48,7 +50,8 @@ fi
 cd $BUILD_DIR
 echo "Enter Director: $BUILD_DIR"
 
-sudo ./create_image >> $ROOT_DIR/$LOG_FILE_OK
+#sudo ./create_image >> $ROOT_DIR/$LOG_FILE_OK
+sudo ./create_image
 if [ $? -eq 0 ] ; then
     echo "[OK  ] sudo ./create_image "
 else
@@ -60,7 +63,8 @@ fi
 
 
 
-sudo ./image_from_dir ./linux-trusty orangepi ext4 opi-pcplus >> $ROOT_DIR/$LOG_FILE_OK
+#sudo ./image_from_dir ./linux-trusty orangepi ext4 opi-pcplus >> $ROOT_DIR/$LOG_FILE_OK
+sudo ./image_from_dir ./linux-trusty orangepi ext4 opi-pcplus
 if [ $? -eq 0 ] ; then
     echo "[OK  ] sudo ./image_from_dir ./linux-trusty orangepi ext4 opi-pcplus "
 else

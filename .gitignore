@@ -129,4 +129,13 @@ update.sh
 download.sh
 vmlinux
 System.map
-orangepi-Kernel/linux-3.4.112/output
+Orangepi-Kernel/linux-3.4.112/output
+uImage_OPI-2
+mksunxichecksum
+resumes.map
+OrangePi-Kernel/build
+OrangePi-BuildLinux/orange/lib/modules/3.4.112/build
+OrangePi-BuildLinux/orange/lib/modules/3.4.112/modules.softdep
+OrangePi-BuildLinux/orange/lib/modules/3.4.112/source/
+OrangePi-Kernel/linux-3.4.112/arch/arm/mach-sunxi/power/brom/mksunxichecksum
+OrangePi-Kernel/linux-3.4.112/arch/arm/mach-sunxi/power/brom/resumes.map

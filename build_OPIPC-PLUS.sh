@@ -29,8 +29,10 @@ if [ $? -eq 0 ] ; then
     echo "[OK  ] sudo ./build_linux_kernel.sh clean clean "
 else
     echo "[ERR ] sudo ./build_linux_kernel.sh clean clean "
-    mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
-    cat $ROOT_DIR/$LOG_FILE_ERR
+    #mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
+    #cat $ROOT_DIR/$LOG_FILE_ERR
+    echo " "
+    echo " "
     exit
 fi
 
@@ -41,8 +43,10 @@ if [ $? -eq 0 ] ; then
     echo "[OK  ] sudo ./build_linux_kernel.sh 2 "
 else
     echo "[ERR ] sudo ./build_linux_kernel.sh 2 "
-    mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
-    cat $ROOT_DIR/$LOG_FILE_ERR
+    #mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
+    #cat $ROOT_DIR/$LOG_FILE_ERR
+    echo " "
+    echo " "
     exit
 fi
 
@@ -56,8 +60,10 @@ if [ $? -eq 0 ] ; then
     echo "[OK  ] sudo ./create_image "
 else
     echo "[ERR ] sudo ./create_image "
-    mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
-    cat $ROOT_DIR/$LOG_FILE_ERR
+    #mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
+    #cat $ROOT_DIR/$LOG_FILE_ERR
+    echo " "
+    echo " "
     exit
 fi
 
@@ -69,8 +75,10 @@ if [ $? -eq 0 ] ; then
     echo "[OK  ] sudo ./image_from_dir ./linux-trusty orangepi ext4 opi-pcplus "
 else
     echo "[ERR ] sudo ./image_from_dir ./linux-trusty orangepi ext4 opi-pcplus "
-    mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
-    cat $ROOT_DIR/$LOG_FILE_ERR
+    #mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
+    #cat $ROOT_DIR/$LOG_FILE_ERR
+    echo " "
+    echo " "
     exit
 fi
 

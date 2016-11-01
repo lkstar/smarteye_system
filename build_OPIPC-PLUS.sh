@@ -23,26 +23,37 @@ echo " "
 cd $KERNEL_DIR
 echo "Enter Director: $KERNEL_DIR"
 
-#sudo ./build_linux_kernel.sh clean clean >> $ROOT_DIR/$LOG_FILE_OK
-sudo ./build_linux_kernel.sh clean clean
-if [ $? -eq 0 ] ; then
-    echo "[OK  ] sudo ./build_linux_kernel.sh clean clean "
+if [ ! $1 ] ; then
+    echo "Do not cleans the kernel tree and build directories"
 else
-    echo "[ERR ] sudo ./build_linux_kernel.sh clean clean "
-    #mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
-    #cat $ROOT_DIR/$LOG_FILE_ERR
-    echo " "
-    echo " "
-    exit
+    CLEAN_1ST=clean
+    echo "cleans the kernel tree and build directories"
+    echo "cleans the kernel tree before build"
+    
+    #sudo ./build_linux_kernel.sh clean clean >> $ROOT_DIR/$LOG_FILE_OK
+    sudo ./build_linux_kernel.sh $CLEAN_1ST clean 
+    if [ $? -eq 0 ] ; then
+        echo "[OK  ] sudo ./build_linux_kernel.sh clean clean "
+    else
+        echo "[ERR ] sudo ./build_linux_kernel.sh clean clean "
+        #mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
+        #cat $ROOT_DIR/$LOG_FILE_ERR
+        echo " "
+        echo " "
+        exit
+    fi
 fi
 
-
-#sudo ./build_linux_kernel.sh 2 clean >> $ROOT_DIR/$LOG_FILE_OK
-sudo ./build_linux_kernel.sh 2 clean 
-if [ $? -eq 0 ] ; then
-    echo "[OK  ] sudo ./build_linux_kernel.sh 2 "
+if [ ! $1 ] ; then
+    sudo ./build_linux_kernel.sh 2 
 else
-    echo "[ERR ] sudo ./build_linux_kernel.sh 2 "
+    #sudo ./build_linux_kernel.sh 2 clean >> $ROOT_DIR/$LOG_FILE_OK
+    sudo ./build_linux_kernel.sh 2 $CLEAN_1ST
+fi
+if [ $? -eq 0 ] ; then
+    echo "[OK  ] sudo ./build_linux_kernel.sh 2 $CLEAN_1ST"
+else
+    echo "[ERR ] sudo ./build_linux_kernel.sh 2 $CLEAN_1ST"
     #mv $ROOT_DIR/$LOG_FILE_OK $ROOT_DIR/$LOG_FILE_ERR
     #cat $ROOT_DIR/$LOG_FILE_ERR
     echo " "

@@ -99,6 +99,10 @@ fi
 echo " "
 echo " "
 echo "Please run bellow command to create sdcard image":
+echo "sudo fdisk –l # get sdcard node number"
+echo "umount /dev/sdxx to remod sdcard"
+echo "sudo fdisk /dev/sdx , select o to delete sdcard partion "
 echo "sudo dd bs=4M if=orangepi.img of=/dev/sd*"
+echo "sudo pkill –USR1 –n –x dd to watch the processing..."
 echo " "
 echo " "

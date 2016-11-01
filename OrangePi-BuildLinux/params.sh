@@ -14,10 +14,10 @@ ONLY_BASE="no"
 # Set hostname, user to be created                    *
 # and root and user passwords                         *
 # *****************************************************
-HOSTNAME="OrangePI"
-USER="orangepi"
-ROOTPASS="orangepi"
-USERPASS="orangepi"
+HOSTNAME="SmartEye"
+USER="ipc"
+ROOTPASS="root"
+USERPASS="ipc"
 
 
 # *****************************************************

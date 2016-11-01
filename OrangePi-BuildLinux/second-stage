@@ -165,8 +165,8 @@ rm /etc/init/tty5.conf > /dev/null 2>&1
 rm /etc/init/tty6.conf > /dev/null 2>&1
 else
     echo "S0:23:respawn:/sbin/getty -L ttyS0 115200 vt102" >> /etc/inittab
-    ln -sf /usr/lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service >> $_LOGFILE 2>&1
-    ln -sf /usr/lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service >> $_LOGFILE 2>&1
+    ln -sf /usr/lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service | tee -a $_LOGFILE 2>&1
+    ln -sf /usr/lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service | tee -a $_LOGFILE 2>&1
 fi
 
 # Set console Fixed font
@@ -227,7 +227,7 @@ fi
 
 
 echo "DEBOOTSTRAP, SECOND-STAGE"
-/debootstrap/debootstrap --second-stage >> $_LOGFILE &
+/debootstrap/debootstrap --second-stage | tee -a $_LOGFILE &
 pid=$! # Process Id of the previous running command
 sleep 0.2
 echo -e "\033[1A\033[K"
@@ -258,7 +258,7 @@ export LANGUAGE=${LANGUAGE}
 
 set_network
 
-#apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AB19BAC9 >> $_LOGFILE 2>&1
+#apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AB19BAC9 | tee -a $_LOGFILE 2>&1
 
 #---------------------------------------------------------------------
 if [ -f /etc/init.d/udev ]; then
@@ -274,13 +274,13 @@ fi
 
 echo "======================="
 echo "Updating & upgrading..."
-apt-get ${_apt} update >> $_LOGFILE 2>&1 &
+apt-get ${_apt} update | tee -a $_LOGFILE 2>&1 &
 pid=$!
 proc_wait $pid "please wait"
-apt-get ${_apt} upgrade >> $_LOGFILE 2>&1 &
+apt-get ${_apt} upgrade | tee -a $_LOGFILE 2>&1 &
 pid=$!
 proc_wait $pid "please wait"
-apt-get clean >> $_LOGFILE 2>&1
+apt-get clean | tee -a $_LOGFILE 2>&1
 
 # ============================================
 # prevent services from starting automatically
@@ -294,10 +294,10 @@ chmod 0755 /usr/sbin/policy-rc.d
 #---------------------------------------------
 
 echo "Installing essential packages..."
-apt-get ${_apt} install lsb-release >> $_LOGFILE 2>&1 &
+apt-get ${_apt} install lsb-release | tee -a $_LOGFILE 2>&1 &
 pid=$!
 proc_wait $pid "please be patient"
-apt-get clean >> $_LOGFILE 2>&1
+apt-get clean | tee -a $_LOGFILE 2>&1
 
 
 _DST=`lsb_release -si`
@@ -306,57 +306,57 @@ echo ""
 echo -e "\033[31m\033[1m*** Installing $_DST $_REL ***\033[22m\033[37m"
 echo ""
 
-#apt-get ${_apt} install udev policykit-1 >> $_LOGFILE 2>&1 &
+#apt-get ${_apt} install udev policykit-1 | tee -a $_LOGFILE 2>&1 &
 #pid=$!
 #proc_wait $pid "please wait"
-#apt-get clean >> $_LOGFILE 2>&1
+#apt-get clean | tee -a $_LOGFILE 2>&1
 
 #if [ "${_REL}" = "vivid" ] ; then
 #    echo "Installing upstart-sysv (vivid)..."
-#    apt-get ${_apt} install upstart-sysv >> $_LOGFILE 2>&1 &
+#    apt-get ${_apt} install upstart-sysv | tee -a $_LOGFILE 2>&1 &
 #    pid=$!
 #    proc_wait $pid "please wait"
-#    apt-get clean >> $_LOGFILE 2>&1
+#    apt-get clean | tee -a $_LOGFILE 2>&1
 #fi
 
 
 if [ "${ONLY_BASE}" = "yes" ] ; then
     echo "Installing base packages..."
-    apt-get ${_apt} install sudo isc-dhcp-client netbase ifupdown iproute network-manager --no-install-recommends >> $_LOGFILE 2>&1 &
+    apt-get ${_apt} install sudo isc-dhcp-client netbase ifupdown iproute network-manager --no-install-recommends | tee -a $_LOGFILE 2>&1 &
     pid=$!
     proc_wait $pid "please be patient"
-    apt-get clean >> $_LOGFILE 2>&1
+    apt-get clean | tee -a $_LOGFILE 2>&1
     
 else
     echo "Installing base packages..."
-    apt-get ${_apt} install vim git subversion build-essential u-boot-tools binutils-arm-linux-gnueabihf gcc-4.7-arm-linux-gnueabihf-base g++-4.7-arm-linux-gnueabihf gcc-arm-linux-gnueabihf cpp-arm-linux-gnueabihf tree udev apt-utils locales dialog sudo isc-dhcp-client netbase ifupdown iproute openssh-server iputils-ping wget curl ntpdate ntp less tzdata console-common module-init-tools u-boot-tools initramfs-tools keyboard-configuration console-setup xz-utils fbset --no-install-recommends >> $_LOGFILE 2>&1 &
+    apt-get ${_apt} install udev apt-utils locales dialog sudo isc-dhcp-client netbase ifupdown iproute openssh-server iputils-ping wget curl ntpdate ntp less tzdata console-common module-init-tools u-boot-tools initramfs-tools keyboard-configuration console-setup xz-utils fbset --no-install-recommends | tee -a $_LOGFILE 2>&1 &
     pid=$!
     proc_wait $pid "please be patient"
-    apt-get clean >> $_LOGFILE 2>&1
+    apt-get clean | tee -a $_LOGFILE 2>&1
 
     # ** INSTALL base language pack for your language
     if [ "${_DST}" = "Ubuntu" ] ; then
 	echo "Installing language pack..."
-	apt-get ${_apt} install language-pack-$LANGUAGE-base --no-install-recommends >> $_LOGFILE 2>&1 &
+	apt-get ${_apt} install language-pack-$LANGUAGE-base --no-install-recommends | tee -a $_LOGFILE 2>&1 &
 	pid=$!
 	proc_wait $pid "please wait"
-	apt-get clean >> $_LOGFILE 2>&1
+	apt-get clean | tee -a $_LOGFILE 2>&1
     else
 	cat /etc/locale.gen | sed s/"# $LANG"/"$LANG"/g > /tmp/locale.gen
 	mv /tmp/locale.gen /etc/locale.gen
-	locale-gen >> $_LOGFILE 2>&1
+	locale-gen | tee -a $_LOGFILE 2>&1
     fi
 
     # ** INSTALL more usefull packages ....
     # apt-get -y install wireless-tools wpasupplicant axel build-essential git whiptail unzip
     echo "Installing more packages..."
-    apt-get ${_apt} install nano mc htop man-db tmux dbus btrfs-tools net-tools ethtool uuid iw lshw network-manager rsync usbutils hdparm i2c-tools parted dosfstools --no-install-recommends >> $_LOGFILE 2>&1 &
+    apt-get ${_apt} install nano mc htop man-db tmux dbus btrfs-tools net-tools ethtool uuid iw lshw network-manager rsync usbutils hdparm i2c-tools parted dosfstools --no-install-recommends | tee -a $_LOGFILE 2>&1 &
     pid=$!
     proc_wait $pid "please wait"
-    apt-get clean >> $_LOGFILE 2>&1
+    apt-get clean | tee -a $_LOGFILE 2>&1
 fi
 
-rm -Rf /boot/* >> $_LOGFILE 2>&1
+rm -Rf /boot/* | tee -a $_LOGFILE 2>&1
 
 if ! [ "${ONLY_BASE}" = "yes" ] ; then
     # ** CONFIGURE time zone, keyboard layout, console ...
@@ -364,19 +364,19 @@ if ! [ "${ONLY_BASE}" = "yes" ] ; then
     if [ ! "${_timezone}" = "" ] ; then
 	echo $_timezone > /etc/timezone
     fi
-    echo "*** LOCALE ***" >> $_LOGFILE 2>&1
-    locale-gen $LANG >> $_LOGFILE 2>&1
-    echo "*** TZDATA ***" >> $_LOGFILE 2>&1
-    dpkg-reconfigure tzdata >> $_LOGFILE 2>&1
-    echo "*** KEYBOARD ***" >> $_LOGFILE 2>&1
-    dpkg-reconfigure keyboard-configuration >> $_LOGFILE 2>&1
-    echo "*** LOCALES ***" >> $_LOGFILE 2>&1
-    dpkg-reconfigure locales >> $_LOGFILE 2>&1
-    echo "*** CONSOLE ***" >> $_LOGFILE 2>&1
-    dpkg-reconfigure console-setup >> $_LOGFILE 2>&1
+    echo "*** LOCALE ***" | tee -a $_LOGFILE 2>&1
+    locale-gen $LANG | tee -a $_LOGFILE 2>&1
+    echo "*** TZDATA ***" | tee -a $_LOGFILE 2>&1
+    dpkg-reconfigure tzdata | tee -a $_LOGFILE 2>&1
+    echo "*** KEYBOARD ***" | tee -a $_LOGFILE 2>&1
+    dpkg-reconfigure keyboard-configuration | tee -a $_LOGFILE 2>&1
+    echo "*** LOCALES ***" | tee -a $_LOGFILE 2>&1
+    dpkg-reconfigure locales | tee -a $_LOGFILE 2>&1
+    echo "*** CONSOLE ***" | tee -a $_LOGFILE 2>&1
+    dpkg-reconfigure console-setup | tee -a $_LOGFILE 2>&1
 fi
 
-echo "*** USER/PASSWORD ***" >> $_LOGFILE 2>&1
+echo "*** USER/PASSWORD ***" | tee -a $_LOGFILE 2>&1
 # ** CREATE root password
 echo "CREATING root PASSWORD..."
 #passwd
@@ -387,10 +387,10 @@ echo "ADDING USER..."
 # set default shell to /bin/bash
 cat /etc/default/useradd | sed s/"SHELL=\/bin\/sh"/"SHELL=\/bin\/bash"/g > /tmp/useradd
 mv /tmp/useradd /etc/default/useradd
-useradd -m -s "/bin/bash" $USER >> $_LOGFILE 2>&1
+useradd -m -s "/bin/bash" $USER | tee -a $_LOGFILE 2>&1
 echo $USER:$USERPASS | chpasswd
-usermod -c $USER $USER >> $_LOGFILE 2>&1
-adduser $USER sudo >> $_LOGFILE 2>&1
+usermod -c $USER $USER | tee -a $_LOGFILE 2>&1
+adduser $USER sudo | tee -a $_LOGFILE 2>&1
 
 if ! [ "${ONLY_BASE}" = "yes" ] ; then
     # ** Tricks

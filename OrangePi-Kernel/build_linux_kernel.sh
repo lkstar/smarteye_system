@@ -25,12 +25,12 @@ cross_comp="arm-linux-gnueabi"
 
 cd build
 
-rm rootfs-lobo.img.gz > /dev/null 2>&1
+rm rootfs-lobo.img.gz | tee /dev/null 2>&1
 
 # create new rootfs cpio
 cd rootfs-test1
-mkdir run > /dev/null 2>&1
-mkdir -p conf/conf.d > /dev/null 2>&1
+mkdir run | tee /dev/null 2>&1
+mkdir -p conf/conf.d | tee /dev/null 2>&1
 
 find . | cpio --quiet -o -H newc > ../rootfs-lobo.img
 cd ..
@@ -42,8 +42,8 @@ cd linux-3.4.112
 LINKERNEL_DIR=`pwd`
 
 # build rootfs
-rm -rf output/* > /dev/null 2>&1
-mkdir -p output/lib > /dev/null 2>&1
+rm -rf output/* | tee /dev/null 2>&1
+mkdir -p output/lib | tee /dev/null 2>&1
 cp ../build/rootfs-lobo.img.gz output/rootfs.cpio.gz
 
 #==================================================================================
@@ -65,13 +65,13 @@ make_kernel() {
 
     # ###########################
     if [ "${2}" = "clean" ]; then
-            make ARCH=arm CROSS_COMPILE=${cross_comp}- mrproper > /dev/null 2>&1
+            make ARCH=arm CROSS_COMPILE=${cross_comp}- mrproper | tee /dev/null 2>&1
     fi
     sleep 1
 
     echo "Building kernel for OPI-${1} (${2}) ..."
     echo "  Configuring ..."
-    make ARCH=arm CROSS_COMPILE=${cross_comp}- sun8iw7p1smp_lobo_defconfig > ../kbuild_${1}_${2}.log 2>&1
+    make ARCH=arm CROSS_COMPILE=${cross_comp}- sun8iw7p1smp_lobo_defconfig | tee ../kbuild_${1}_${2}.log 2>&1
     if [ $? -ne 0 ]; then
         echo "  Error: KERNEL NOT BUILT."
         exit 1
@@ -81,7 +81,7 @@ make_kernel() {
     # #############################################################################
     # build kernel (use -jN, where N is number of cores you can spare for building)
     echo "  Building kernel & modules ..."
-    make -j6 ARCH=arm CROSS_COMPILE=${cross_comp}- uImage modules >> ../kbuild_${1}_${2}.log 2>&1
+    make -j6 ARCH=arm CROSS_COMPILE=${cross_comp}- uImage modules | tee -a ../kbuild_${1}_${2}.log 2>&1
     if [ $? -ne 0 ] || [ ! -f arch/arm/boot/uImage ]; then
         echo "  Error: KERNEL NOT BUILT."
         exit 1
@@ -92,12 +92,12 @@ make_kernel() {
     # export modules to output
     echo "  Exporting modules ..."
     rm -rf output/lib/*
-    make ARCH=arm CROSS_COMPILE=${cross_comp}- INSTALL_MOD_PATH=output modules_install >> ../kbuild_${1}_${2}.log 2>&1
+    make ARCH=arm CROSS_COMPILE=${cross_comp}- INSTALL_MOD_PATH=output modules_install | tee -a ../kbuild_${1}_${2}.log 2>&1
     if [ $? -ne 0 ] || [ ! -f arch/arm/boot/uImage ]; then
         echo "  Error."
     fi
     echo "  Exporting firmware ..."
-    make ARCH=arm CROSS_COMPILE=${cross_comp}- INSTALL_MOD_PATH=output firmware_install >> ../kbuild_${1}_${2}.log 2>&1
+    make ARCH=arm CROSS_COMPILE=${cross_comp}- INSTALL_MOD_PATH=output firmware_install | tee -a ../kbuild_${1}_${2}.log 2>&1
     if [ $? -ne 0 ] || [ ! -f arch/arm/boot/uImage ]; then
         echo "  Error."
     fi
@@ -133,18 +133,18 @@ make_kernel() {
 
 if [ "${1}" = "clean" ]; then
     echo "Cleaning..."
-    make ARCH=arm CROSS_COMPILE=${cross_comp}- mrproper > /dev/null 2>&1
+    make ARCH=arm CROSS_COMPILE=${cross_comp}- mrproper | tee /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "  Error."
     fi
-    rm -rf ../build/lib/* > /dev/null 2>&1
-    rm -f ../build/uImage* > /dev/null 2>&1
-    rm -f ../kbuild* > /dev/null 2>&1
-    rm -f ../malibuild* > /dev/null 2>&1
-    rm if ../linux-3.4/modules/malibuild* > /dev/null 2>&1
-    rmdir ../build/lib > /dev/null 2>&1
-    rm ../build/rootfs-lobo.img.gz > /dev/null 2>&1
-    rm -rf output/* > /dev/null 2>&1
+    rm -rf ../build/lib/* | tee /dev/null 2>&1
+    rm -f ../build/uImage* | tee /dev/null 2>&1
+    rm -f ../kbuild* | tee /dev/null 2>&1
+    rm -f ../malibuild* | tee /dev/null 2>&1
+    rm if ../linux-3.4/modules/malibuild* | tee /dev/null 2>&1
+    rmdir ../build/lib | tee /dev/null 2>&1
+    rm ../build/rootfs-lobo.img.gz | tee /dev/null 2>&1
+    rm -rf output/* | tee /dev/null 2>&1
 elif [ "${1}" = "all" ]; then
     make_kernel "2" "${2}"
     make_kernel "plus" "${2}"

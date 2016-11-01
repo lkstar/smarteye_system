@@ -10,9 +10,9 @@ fi
 # ----------------------------------------------------------------------
 # === CHECK DESTINATION ============================================
 if [ ! "${image_name}" = "" ]; then
-    rm ${sdcard}1 > /dev/null 2>&1
-    rm ${sdcard}2 > /dev/null 2>&1
-    rm ${sdcard}u > /dev/null 2>&1
+    rm ${sdcard}1 | tee /dev/null 2>&1
+    rm ${sdcard}2 | tee /dev/null 2>&1
+    rm ${sdcard}u | tee /dev/null 2>&1
     if [ -b $image_name ]; then
         # === ON BLOCK DEVICE ======================================
         echo "Creating filesystem on block device ${image_name} ..."
@@ -29,10 +29,10 @@ if [ ! "${image_name}" = "" ]; then
         fi
 
         # remove old image files
-        rm ${sdcard} > /dev/null 2>&1
-        rm ${sdcard}.md5sum > /dev/null 2>&1
-        rm ${sdcard}.xz > /dev/null 2>&1
-        rm ${sdcard}.xz.md5sum > /dev/null 2>&1
+        rm ${sdcard} | tee /dev/null 2>&1
+        rm ${sdcard}.md5sum | tee /dev/null 2>&1
+        rm ${sdcard}.xz | tee /dev/null 2>&1
+        rm ${sdcard}.xz.md5sum | tee /dev/null 2>&1
         # ========================================
         _directsd="no"
         _ddparm="conv=notrunc"
@@ -72,17 +72,17 @@ if [ ! "${sdcard}" = "" ]; then
         _ersz=10
     echo "Creating bootable SD card $sdcard, please wait ..."
     echo ""
-    dd if=/dev/zero of=${sdcard} bs=1M count=$_ersz > /dev/null 2>&1
+    dd if=/dev/zero of=${sdcard} bs=1M count=$_ersz | tee /dev/null 2>&1
     else
     echo "Creating partition images, please wait ..."
     if [ "${_boot_on_ext4}" = "yes" ] ; then
-        dd if=/dev/zero of=${sdcard}1 bs=1M count=$linuxsize > /dev/null 2>&1
+        dd if=/dev/zero of=${sdcard}1 bs=1M count=$linuxsize | tee /dev/null 2>&1
         _ersz=$(expr $linuxsize + 30)
     else
-        dd if=/dev/zero of=${sdcard}1 bs=1M count=$fatsize > /dev/null 2>&1
-        dd if=/dev/zero of=${sdcard}2 bs=1M count=$linuxsize > /dev/null 2>&1
+        dd if=/dev/zero of=${sdcard}1 bs=1M count=$fatsize | tee /dev/null 2>&1
+        dd if=/dev/zero of=${sdcard}2 bs=1M count=$linuxsize | tee /dev/null 2>&1
         _ersz=$(expr $fatsize + $linuxsize + 30)
-        dd if=/dev/zero of=${sdcard} bs=1M count=$_ersz > /dev/null 2>&1
+        dd if=/dev/zero of=${sdcard} bs=1M count=$_ersz | tee /dev/null 2>&1
     fi
     fi
 
@@ -92,7 +92,7 @@ if [ ! "${sdcard}" = "" ]; then
     # Create msdos partition table
     echo ""
     echo "Creating new filesystem on $sdcard..."
-    echo -e "o\nw" | fdisk ${sdcard} > /dev/null 2>&1
+    echo -e "o\nw" | fdisk ${sdcard} | tee /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "ERROR."
         exit 0
@@ -100,7 +100,7 @@ if [ ! "${sdcard}" = "" ]; then
     sync
     echo "  New filesystem created on $sdcard."
     sleep 1
-    partprobe -s ${sdcard} > /dev/null 2>&1
+    partprobe -s ${sdcard} | tee /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "ERROR."
         exit 1
@@ -118,11 +118,11 @@ if [ ! "${sdcard}" = "" ]; then
         else
             eext4=$(expr $linuxsize \* 1024 \* 1024 / 512 + $sext4)
         fi
-        echo -e "n\np\n1\n$sext4\n$eext4\nt\n83\nw" | fdisk ${sdcard} > /dev/null 2>&1
+        echo -e "n\np\n1\n$sext4\n$eext4\nt\n83\nw" | fdisk ${sdcard} | tee /dev/null 2>&1
         sync
         sleep 2
         if [ "${_directsd}" = "yes" ]; then
-            partprobe -s ${sdcard} > /dev/null 2>&1
+            partprobe -s ${sdcard} | tee /dev/null 2>&1
             if [ $? -ne 0 ]; then
                 echo "ERROR."
                 exit 0
@@ -139,11 +139,11 @@ if [ ! "${sdcard}" = "" ]; then
         else
             eext4=$(expr $linuxsize \* 1024 \* 1024 / 512 + $sext4)
         fi
-        echo -e "n\np\n1\n$sfat\n$efat\nn\np\n2\n$sext4\n$eext4\nt\n1\nb\nt\n2\n83\nw" | fdisk ${sdcard} > /dev/null 2>&1
+        echo -e "n\np\n1\n$sfat\n$efat\nn\np\n2\n$sext4\n$eext4\nt\n1\nb\nt\n2\n83\nw" | fdisk ${sdcard} | tee /dev/null 2>&1
         sync
         sleep 2
         if [ "${_directsd}" = "yes" ]; then
-            partprobe -s ${sdcard} > /dev/null 2>&1
+            partprobe -s ${sdcard} | tee /dev/null 2>&1
             if [ $? -ne 0 ]; then
                 echo "ERROR."
                 exit 0
@@ -159,7 +159,7 @@ if [ ! "${sdcard}" = "" ]; then
     echo ""
     if [ ! "${_boot_on_ext4}" = "yes" ] ; then
         echo "Formating fat partition ..."
-        mkfs -t vfat -F 32 -n BOOT ${sdcard}1 > /dev/null 2>&1
+        mkfs -t vfat -F 32 -n BOOT ${sdcard}1 | tee /dev/null 2>&1
         if [ $? -ne 0 ]; then
             echo "ERROR formating fat partition."
             exit 0
@@ -169,14 +169,14 @@ if [ ! "${sdcard}" = "" ]; then
         if [ "${_format}" = "btrfs" ] ; then
             echo "Formating linux partition (btrfs), please wait ..."
             # format as btrfs
-            mkfs.btrfs -O ^extref,^skinny-metadata -f -L linux ${sdcard}2 > /dev/null 2>&1
+            mkfs.btrfs -O ^extref,^skinny-metadata -f -L linux ${sdcard}2 | tee /dev/null 2>&1
             if [ $? -ne 0 ]; then
                 echo "ERROR formating btrfs partition."
                 exit 1
             fi
         else
             echo "Formating linux partition (ext4), please wait ..."
-            mkfs -F -t ext4 -L linux ${sdcard}2 > /dev/null 2>&1
+            mkfs -F -t ext4 -L linux ${sdcard}2 | tee /dev/null 2>&1
             if [ $? -ne 0 ]; then
                 echo "ERROR formating ext4 partition."
                 exit 1
@@ -187,14 +187,14 @@ if [ ! "${sdcard}" = "" ]; then
         if [ "${_format}" = "btrfs" ] ; then
             echo "Formating linux partition (btrfs), please wait ..."
             # format as btrfs
-            mkfs.btrfs -O ^extref,^skinny-metadata -f -L linux ${sdcard}2 > /dev/null 2>&1
+            mkfs.btrfs -O ^extref,^skinny-metadata -f -L linux ${sdcard}2 | tee /dev/null 2>&1
             if [ $? -ne 0 ]; then
                 echo "ERROR formating btrfs partition."
                 exit 1
             fi
         else
             echo "Formating linux partition (ext4), please wait ..."
-            mkfs -F -t ext4 -L linux ${sdcard}1 > /dev/null 2>&1
+            mkfs -F -t ext4 -L linux ${sdcard}1 | tee /dev/null 2>&1
             if [ $? -ne 0 ]; then
                 echo "ERROR formating ext4 partition."
                 exit 0
@@ -207,12 +207,12 @@ if [ ! "${sdcard}" = "" ]; then
     #************************************************************************
     echo ""
     echo "Instaling u-boot to $sdcard ..."
-    dd if=orange/boot0_OPI.fex of=${sdcard} bs=1k seek=8 ${_ddparm} > /dev/null 2>&1
+    dd if=orange/boot0_OPI.fex of=${sdcard} bs=1k seek=8 ${_ddparm} | tee /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "ERROR installing boot0."
         exit 1
     fi
-    dd if=orange/u-boot_OPI.fex of=${sdcard} bs=1k seek=16400 ${_ddparm} > /dev/null 2>&1
+    dd if=orange/u-boot_OPI.fex of=${sdcard} bs=1k seek=16400 ${_ddparm} | tee /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "ERROR installing u-boot."
         exit 1
@@ -221,7 +221,7 @@ if [ ! "${sdcard}" = "" ]; then
     #************************************************************************
 
     if [ ! "${_directsd}" = "yes" ] ; then
-        dd if=${sdcard} of=${sdcard}u bs=512 count=40960 > /dev/null 2>&1
+        dd if=${sdcard} of=${sdcard}u bs=512 count=40960 | tee /dev/null 2>&1
         rm ${sdcard}
     fi
     echo "U-boot installed to $sdcard."

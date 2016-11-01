@@ -120,6 +120,7 @@ zImage
 Image
 OrangePi-BuildLinux/boot-trusty/
 OrangePi-BuildLinux/linux-trusty/
+OrangePi-Kernel/linux-3.4.112/include/generated/compile.h
 *.img
 *.img1
 *.img2

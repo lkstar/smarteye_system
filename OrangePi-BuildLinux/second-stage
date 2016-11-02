@@ -31,6 +31,19 @@ auto eth0
 iface eth0 inet dhcp
 _EOF_
 
+if [ ! -d "/etc/wpasupplicant/" ]
+    mkdir -p /etc/wpasupplicant
+fi
+cat >> /etc/wpasupplicant/wpa_supplicant.conf << _EOF_
+network={
+    ssid="your_wifi_ssid_name"
+
+    psk="your_wifi_password"
+    
+    priority=1 
+}
+_EOF_
+
 }
 
 

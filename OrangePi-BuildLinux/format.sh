@@ -10,9 +10,15 @@ fi
 # ----------------------------------------------------------------------
 # === CHECK DESTINATION ============================================
 if [ ! "${image_name}" = "" ]; then
-    rm ${sdcard}1 | tee /dev/null 2>&1
-    rm ${sdcard}2 | tee /dev/null 2>&1
-    rm ${sdcard}u | tee /dev/null 2>&1
+    if [ -f "${sdcard}1" ] ; then
+        rm ${sdcard}1 | tee /dev/null 2>&1
+    fi
+    if [ -f "${sdcard}2" ] ; then
+        rm ${sdcard}2 | tee /dev/null 2>&1
+    fi
+    if [ -f "${sdcard}u" ] ; then
+        rm ${sdcard}u | tee /dev/null 2>&1
+    fi
     if [ -b $image_name ]; then
         # === ON BLOCK DEVICE ======================================
         echo "Creating filesystem on block device ${image_name} ..."
@@ -29,10 +35,18 @@ if [ ! "${image_name}" = "" ]; then
         fi
 
         # remove old image files
-        rm ${sdcard} | tee /dev/null 2>&1
-        rm ${sdcard}.md5sum | tee /dev/null 2>&1
-        rm ${sdcard}.xz | tee /dev/null 2>&1
-        rm ${sdcard}.xz.md5sum | tee /dev/null 2>&1
+        if [ -f "${sdcard}" ] ; then
+            rm ${sdcard} | tee /dev/null 2>&1
+        fi
+        if [ -f "${sdcard}.md5sum" ] ; then
+            rm ${sdcard}.md5sum | tee /dev/null 2>&1
+        fi
+        if [ -f "${sdcard}.xz" ] ; then
+            rm ${sdcard}.xz | tee /dev/null 2>&1
+        fi
+        if [ -f "${sdcard}.xz.md5sum" ] ; then
+            rm ${sdcard}.xz.md5sum | tee /dev/null 2>&1
+        fi
         # ========================================
         _directsd="no"
         _ddparm="conv=notrunc"
@@ -52,38 +66,42 @@ fi
 if [ ! "${sdcard}" = "" ]; then
 
     if [ ! "${_directsd}" = "yes" ] ; then
-    echo "Using disk image \"$sdcard\""
+        echo "Using disk image \"$sdcard\""
     fi
     if [ ! -f orange/boot0_OPI.fex ]; then
-    echo "Error: orange/boot0_OPI.fex not found."
-    exit 1
+        echo "Error: orange/boot0_OPI.fex not found."
+        exit 1
     fi
 
     if [ ! -f orange/u-boot_OPI.fex ]; then
-    echo "Error: orange/u-boot_OPI.fex not found."
-    exit 1
+        echo "Error: orange/u-boot_OPI.fex not found."
+        exit 1
     fi
 
     if [ $linuxsize -eq 0 ]; then
-    linuxsize=1024
+        linuxsize=1024
     fi
 
     if [ "${_directsd}" = "yes" ] ; then
         _ersz=10
-    echo "Creating bootable SD card $sdcard, please wait ..."
-    echo ""
-    dd if=/dev/zero of=${sdcard} bs=1M count=$_ersz | tee /dev/null 2>&1
-    else
-    echo "Creating partition images, please wait ..."
-    if [ "${_boot_on_ext4}" = "yes" ] ; then
-        dd if=/dev/zero of=${sdcard}1 bs=1M count=$linuxsize | tee /dev/null 2>&1
-        _ersz=$(expr $linuxsize + 30)
-    else
-        dd if=/dev/zero of=${sdcard}1 bs=1M count=$fatsize | tee /dev/null 2>&1
-        dd if=/dev/zero of=${sdcard}2 bs=1M count=$linuxsize | tee /dev/null 2>&1
-        _ersz=$(expr $fatsize + $linuxsize + 30)
+        echo "Creating bootable SD card $sdcard, please wait ..."
+        echo ""
         dd if=/dev/zero of=${sdcard} bs=1M count=$_ersz | tee /dev/null 2>&1
-    fi
+    else
+        echo "Creating partition images, please wait ..."
+        if [ "${_boot_on_ext4}" = "yes" ] ; then
+            echo "dd if=/dev/zero of=${sdcard}1 bs=1M count=$linuxsize"
+            dd if=/dev/zero of=${sdcard}1 bs=1M count=$linuxsize | tee /dev/null 2>&1
+            _ersz=$(expr $linuxsize + 30)
+        else
+            echo "dd if=/dev/zero of=${sdcard}1 bs=1M count=$fatsize"
+            dd if=/dev/zero of=${sdcard}1 bs=1M count=$fatsize | tee /dev/null 2>&1
+            echo "dd if=/dev/zero of=${sdcard}2 bs=1M count=$linuxsize"
+            dd if=/dev/zero of=${sdcard}2 bs=1M count=$linuxsize | tee /dev/null 2>&1
+            _ersz=$(expr $fatsize + $linuxsize + 30)
+            echo "dd if=/dev/zero of=${sdcard} bs=1M count=$_ersz"
+            dd if=/dev/zero of=${sdcard} bs=1M count=$_ersz | tee /dev/null 2>&1
+        fi
     fi
 
     sync

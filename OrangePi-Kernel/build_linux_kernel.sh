@@ -25,7 +25,9 @@ cross_comp="arm-linux-gnueabi"
 
 cd build
 
-rm rootfs-lobo.img.gz | tee /dev/null 2>&1
+if [ -f "rootfs-lobo.img.gz" ] ; then
+    rm rootfs-lobo.img.gz | tee /dev/null 2>&1
+fi
 
 # create new rootfs cpio
 cd rootfs-test1

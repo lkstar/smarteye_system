@@ -81,19 +81,21 @@ echo ""
     
 if [ ! "${_boot_on_ext4}" = "yes" ] ; then      
     if [ ! -d $bootdir ]; then
-	mkdir -p $bootdir
+	    mkdir -p $bootdir
+    else
+        rm $bootdir/* | tee /dev/null 2>&1  
+        sync
+        umount $bootdir | tee /dev/null 2>&1
     fi
-    rm $bootdir/* | tee /dev/null 2>&1  
-    sync
-    umount $bootdir | tee /dev/null 2>&1
 fi
 
 if [ ! -d $odir ]; then                 
     mkdir -p $odir
+else
+    rm -rf $odir/* | tee /dev/null 2>&1
+    sync
+    umount $odir | tee /dev/null 2>&1
 fi
-rm -rf $odir/* | tee /dev/null 2>&1
-sync
-umount $odir | tee /dev/null 2>&1
 sleep 1
 
 # ================
@@ -111,19 +113,19 @@ echo "Mounting SD Card partitions..."
 
 if [ ! "${_boot_on_ext4}" = "yes" ] ; then      
     if ! mount ${sdcard}1 $bootdir; then
-	echo "ERROR mounting fat partitions..."
-	exit 1
+	    echo "ERROR mounting fat partitions..."
+	    exit 1
     fi
     if ! mount ${_mntopt} ${sdcard}2 $odir; then
-	echo "ERROR mounting linux partitions..."
-	umount $bootdir
-	exit 1
+	    echo "ERROR mounting linux partitions..."
+	    umount $bootdir
+	    exit 1
     fi
     echo "FAT partitions mounted to $bootdir"
 else
     if ! mount ${_mntopt} ${sdcard}1 $odir; then
-	echo "ERROR mounting linux partitions..."
-	exit 1
+	    echo "ERROR mounting linux partitions..."
+	    exit 1
     fi
 fi
 echo "linux partition mounted to $odir"

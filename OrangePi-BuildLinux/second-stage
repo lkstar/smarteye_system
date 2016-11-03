@@ -31,7 +31,7 @@ auto eth0
 iface eth0 inet dhcp
 _EOF_
 
-if [ ! -d "/etc/wpasupplicant/" ]
+if [ ! -d "/etc/wpasupplicant/" ] ; then
     mkdir -p /etc/wpasupplicant
 fi
 cat >> /etc/wpasupplicant/wpa_supplicant.conf << _EOF_

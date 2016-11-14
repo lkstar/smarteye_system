@@ -287,6 +287,7 @@ fi
 
 echo "======================="
 echo "Updating & upgrading..."
+add-apt-repository ppa:george-edison55/cmake-3.x
 apt-get ${_apt} update | tee -a $_LOGFILE 2>&1 &
 pid=$!
 proc_wait $pid "please wait"
@@ -342,7 +343,7 @@ if [ "${ONLY_BASE}" = "yes" ] ; then
     
 else
     echo "Installing base packages..."
-    apt-get ${_apt} install vim git tree udev apt-utils locales dialog sudo isc-dhcp-client netbase ifupdown iproute openssh-server iputils-ping wget curl ntpdate ntp less tzdata console-common module-init-tools u-boot-tools initramfs-tools keyboard-configuration console-setup xz-utils fbset --no-install-recommends | tee -a $_LOGFILE 2>&1 &
+    apt-get ${_apt} install vim git tree cmake udev apt-utils locales dialog sudo isc-dhcp-client netbase ifupdown iproute openssh-server iputils-ping wget curl ntpdate ntp less tzdata console-common module-init-tools u-boot-tools initramfs-tools keyboard-configuration console-setup xz-utils fbset --no-install-recommends | tee -a $_LOGFILE 2>&1 &
     pid=$!
     proc_wait $pid "please be patient"
     apt-get clean | tee -a $_LOGFILE 2>&1

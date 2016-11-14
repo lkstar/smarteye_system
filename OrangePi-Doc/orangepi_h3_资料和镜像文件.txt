@@ -1,0 +1,25 @@
+Allwinner H3 (sun8iw7p1) SoC features a Quad-Core Cortex-A7 ARM CPU, and aMali400 MP2 GPU from ARM. The Allwinner H3 is a highly cost-efficient quad-core OTT box processor, primarily marketed as being for "home entertainment" systems.
+
+http://linux-sunxi.org/h3
+
+https://github.com/orangepi-xunlong
+
+https://github.com/loboris
+
+http://linux-sunxi.org/Xunlong_Orange_Pi_One
+
+Linux Distributions for Orange PI H3 boards
+http://www.orangepi.org/orangepibbsen/forum.php?mod=viewthread&tid=342
+
+faddat  linux 4.6的内核
+https://github.com/faddat/linux
+https://coding.net/u/faddat/linux
+
+
+香橙派镜像和全志资料
+http://pan.baidu.com/share/link?shareid=1324589986&uk=690868877
+
+
+H3 SoC Features
+
+CPUARM Cortex-A7 Quad-Core512KB L2-Cache (shared between four cores)32 KB (Instruction) / 32KiB (Data) L1-Cache per coreSIMD NEON, VFP4VirtualizationLarge Physical Address Extensions (LPAE) 1TBGPUARM Mali400 MP2Featuring 1 vertex shader (GP) and 2 fragment shaders (PP).Complies with OpenGL ES 2.0MemoryDDR2/DDR2L-DDR3/DDR3L controllerNAND Flash controller and 64-bit ECCVideoUltra HD 4k and Full HD 1080p video decoding of MPEG-2, MPEG-4 SP/ASP GMC, H.263, H.264, H.265, WMV9/VC-1, and VP8BD Directory, BD ISO and BD m2ts video decodingH.264 High Profile 1080P@30fps encoding3840×1080,1920x2160 3D decodingComplies with RTSP, HTTP,HLS,RTMP,MMS streaming media protocolDisplayIntegrated HDMI V1.4 with HDCP1.24K@30fpsTV CVBS outputCameraIntegrated parallel 8-bit I/F YUV422 sensorSupport CCIR656 protocol fot NTSC and PAL5M CMOS sensor supportSupport video capture resolution up to1080p@30fpsAudioTwo audio digital-to-analog(DAC) channels 92dB SNRTwo differential microphone inputs (one low-noise)Stereo Linein inputEmbedded Controller:AR100, an OpenRISC controller. Manages deep powersave modes.Thermal Sensor Controller (TSC) providing over-temperature protection interrupt and over-temperature alarm interruptno PMU (According to arisc_dvfs.cpmuic_type defines 0~2, 0:none, 1:gpio, 2:i2c)

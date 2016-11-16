@@ -10,7 +10,6 @@
 # default wlan
 #iface=wlan0
 iface=`ifconfig | grep -e ^w -e ^W | awk '{print $1}'`
-iface_num=
 # driver device
 dev=$(sysctl -n net.wlan.0.%parent)
 if ifconfig $dev >/dev/null 2>&1 ; then
@@ -25,16 +24,105 @@ current_id=-1
 # use default wpa_supplicant.conf
 use_conf=1
 
+
+scan_user() {
+    wName1=byxlk-server
+    wPass1=20060806
+    wName2=test2
+    wPass2=19ijkl19ijkl
+    wName3=test3
+    wPass3=87654321
+    wName4=test4
+    wPass4=12345678
+    wName5=test5
+    wPass5=12345678
+    wName6=test6
+    wPass6=12345678
+    flag=0
+
+    wpa_lookup
+    wpa_cli -i $iface ap_scan 1
+    wpa_cli -i $iface scan
+
+    SCAN_RESULTS=`wpa_cli -i $iface scan_results`
+    sleep 1
+    SCAN_WIFI=`echo "$SCAN_RESULTS" | awk -F '\t' \
+    '/..:..:..:..:..:../ {printf "%s\n",$NF }'`
+    echo "$SCAN_WIFI" | grep -q "$wName1"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName1
+        CurrentPass=$wPass1
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+	
+    echo "$SCAN_WIFI" | grep -q "$wName2"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName2
+        CurrentPass=$wPass2
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+    
+    echo "$SCAN_WIFI" | grep -q "$wName3"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName3
+        CurrentPass=$wPass3
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+    
+    echo "$SCAN_WIFI" | grep -q "$wName4"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName4
+        CurrentPass=$wPass4
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+
+    echo "$SCAN_WIFI" | grep -q "$wName5"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName5
+        CurrentPass=$wPass5
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+
+    echo "$SCAN_WIFI" | grep -q "$wName6"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName6
+        CurrentPass=$wPass6
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+
+    if [ $flag -ne 1 ]; then
+        echo "Please configure the default WiFi information..."
+        exit 0
+    fi
+
+    current_id=`wpa_cli -i $iface add_network | tail -1`
+    wpa_cli -i $iface set_network $current_id ssid "\"$CurrentWifi\""
+    update_psk "$CurrentWifi" "$CurrentPass"
+
+    echo "Debug: wifiName: $CurrentWifi wifiPass: $CurrentPass  current_id: $current_id"
+    final $CurrentWifi $current_id
+
+    exit 0
+
+}
+
 usage () {
     cat <<EOF
 Usage:
-$0               default
+$0               Using the default wifi.
+$0 -C name pass  connect wifi name:wifi name pass: wifi passwd.
 $0 -l/list       use saved configured network, do not scan. So make sure the AP exist.
 $0 stop          stop wifi connection
-$0 reconfig      re-configure device
-$0 newconf       create new /etc/wpa_supplicant.conf
-$0 addif         if not set rc.conf wlan configure; means does not exist $iface currently.
-$0 ns 127.0.0.1  set this nameserver
+#$0 reconfig      re-configure device
+#$0 newconf       create new /etc/wpa_supplicant.conf
+#$0 addif         if not set rc.conf wlan configure; means does not exist $iface currently.
+#$0 ns 127.0.0.1  set this nameserver
 $0 help/-h/--help
 EOF
     exit 0
@@ -108,44 +196,11 @@ final () {
     wpa_cli -i $iface enable_network $nid
     wpa_cli -i $iface reconnect
     wpa_cli -i $iface save_config
-    dhclient -b $iface
+    sleep 1
+    dhclient   $iface
+
     exit 0
 }
-
-
-case $1 in
-    stop)
-        stop_wifi ;;
-    -l|list)
-        wpa_lookup
-        wpa_cli -i $iface list
-        echo "Please enter the network id:"
-        read current_id
-        if [ $current_id -lt 0 -o $current_id -ge 64 ] ; then
-            # too small or too big try again
-            wpa_cli -i $iface list
-            echo "Please enter the network id:"
-            read current_id
-        fi
-        NETWORK=`wpa_cli -i $iface list | awk '{if($1=='"$current_id"'){print $2}}'`
-        final $NETWORK $current_id
-        ;;
-    reconfig)
-        recfg_dev ;;
-    newconf)
-        use_conf=0 ;;
-    addif)
-        cfg_dev ;;
-    ns)
-        if [ ! -z $2 ] ; then
-            if ! grep -q $2 /etc/resolv.conf ; then
-                echo $2 >> /etc/resolv.conf
-            fi
-        fi
-        ;;
-    -h|--help|help)
-        usage ;;
-esac
 
 use_wificfg () {
     if [ -f $wpa_supplicant_conf ] ; then
@@ -162,6 +217,62 @@ use_wificfg () {
         return 1
     fi
 }
+
+
+##################################################################################
+
+if [ $# -eq 0 ]; then
+    echo "Using the default configuration..."
+    scan_user
+fi
+
+
+case $1 in
+    -C)
+        if [ $# -ne 3 ];
+        then
+            echo "Input format error, please view the help!"
+            usage
+            exit 0
+        fi
+        wifiName=$2
+        wifiPass=$3
+        ;;
+    stop)
+        stop_wifi ;;
+    -l|list)
+        wpa_lookup
+        wpa_cli -i $iface list
+        echo "Please enter the network id:"
+        read current_id
+        if [ $current_id -lt 0 -o $current_id -ge 64 ] ; then
+            # too small or too big try again
+            wpa_cli -i $iface list
+            echo "Please enter the network id:"
+            read current_id
+        fi
+        NETWORK=`wpa_cli -i $iface list | awk '{if($1=='"$current_id"'){print $2}}'`
+        final $NETWORK $current_id
+        ;;
+#    reconfig)
+#        recfg_dev
+#        exit 0
+#        ;;
+#    newconf)
+#        use_conf=0 ;;
+#    addif)
+#        cfg_dev ;;
+#    ns)
+#        if [ ! -z $2 ] ; then
+#            if ! grep -q $2 /etc/resolv.conf ; then
+#                echo $2 >> /etc/resolv.conf
+#            fi
+#        fi
+#        ;;
+    -h|--help|help)
+        usage ;;
+esac
+
 
 if use_wificfg ; then
     echo "Using $wpa_supplicant_conf ."
@@ -180,92 +291,41 @@ fi
 wpa_lookup
 wpa_cli -i $iface ap_scan 1
 wpa_cli -i $iface scan
-dialog --backtitle "FreeBSD Wifi" --title "Scanning" --ok-label "Skip" \
-	--pause "Waiting 5 seconds to scan for wireless networks..." \
-	9 40 5 || exit 1
 
 SCAN_RESULTS=`wpa_cli -i $iface scan_results`
-NETWORKS=`echo "$SCAN_RESULTS" | awk -F '\t' \
-    '/..:..:..:..:..:../ {if (length($5) > 0) printf("\"%s\"\t%s\n", $5, $4);}' |
-    sort | uniq`
-
-if [ -z "$NETWORKS" ] ; then
-	dialog --backtitle "FreeBSD Wifi" --title "Error" \
-	    --yesno "No wireless networks were found. Rescan?" 0 0 && \
-	    exec $0 $@
-	exit 1
+sleep 1
+SCAN_WIFI=`echo "$SCAN_RESULTS" | awk -F '\t' \
+        '/..:..:..:..:..:../ {printf "%s\n",$NF }'`
+echo "$SCAN_WIFI" | grep -q "$wifiName"
+if [ $? -eq 0 ]; then
+    echo "Connect wireless $wifiName, PLS wait..."
+else
+    echo "No wireless networks were found."
+    exit 0
 fi
 
-exec 3>&1
-NETWORK=`sh -c "dialog --extra-button --extra-label \"Rescan\" \
-    --backtitle \"FreeBSD Wifi\" --title \"Network Selection\" --menu \
-    \"Select a wireless network to connect to.\" 0 0 0 \
-    $(echo $NETWORKS | tr '\n' ' ')" 2>&1 1>&3`
-case $? in
-    0)	# OK
-	    ;;
-    1)	# Cancel
-	    exit 1
-	    ;;
-    3)	# Rescan
-	    exec $0 $@
-	    ;;
-esac
-exec 3>&-
+#NETWORKS=`echo "$SCAN_RESULTS" | awk -F '\t' \
+#    '/..:..:..:..:..:../ {if (length($5) > 0) printf("\"%s\"\t%s\n", $5, $4);}' |
+#    sort | uniq`
+#echo "+++DBG: NETWORKS end"
 
-current_id=`check_network "$NETWORK"`
-if [ $current_id -ge 0 ] ; then
-    sh -c "dialog --backtitle \"FreeBSD Wifi\" --title \"Connect to Network\" --yesno \"Connect to configured network: $NETWORK ?\" 0 0"
-    if [ $? -eq 0 ] ; then
-        final $NETWORK $current_id
-    fi
-fi
+#if [ -z "$NETWORKS" ] ; then
+#	dialog --backtitle "FreeBSD Wifi" --title "Error" \
+#	    --yesno "No wireless networks were found. Rescan?" 0 0 && \
+#	    exec $0 $@
+#	exit 1
+#fi
 
-ENCRYPTION=`echo "$NETWORKS" | awk -F '\t' \
-    "/^\"$NETWORK\"\t/ {printf(\"%s\n\", \\\$2 );}"`
 
-if echo $ENCRYPTION | grep -q 'PSK' ; then
-	exec 3>&1
-	PASS=`dialog --insecure --backtitle "FreeBSD Wifi" \
-	    --title "WPA Setup" --mixedform "" 0 0 0 \
-		"SSID" 1 0 "$NETWORK" 1 12 0 0 2 \
-		"Password" 2 0 "" 2 12 15 63 1 \
-		2>&1 1>&3` \
-	    || exec $0 $@
-	exec 3>&-
-    if [ $current_id -ge 0 ] ; then
-        update_psk "$NETWORK" "$PASS"
-    else
-        current_id=`wpa_cli -i $iface add_network | tail -1`
-        wpa_cli -i $iface set_network $current_id ssid "\"$NETWORK\""
-        update_psk "$NETWORK" "$PASS"
-    fi
-elif echo $ENCRYPTION | grep -q WEP ; then
-	exec 3>&1
-	WEPKEY=`dialog --insecure --backtitle "FreeBSD Wifi" \
-	    --title "WEP Setup" --mixedform "" 0 0 0 \
-		"SSID" 1 0 "$NETWORK" 1 12 0 0 2 \
-		"WEP Key 0" 2 0 "" 2 12 15 0 1 \
-		2>&1 1>&3` \
-	    || exec $0 $@
-    if [ $current_id -ge 0 ] ; then
-        wpa_cli -i $iface set_network $current_id wep_key0 "\"$WEPKEY\""
-    else
-        current_id=`wpa_cli -i $iface add_network | tail -1`
-        wpa_cli -i $iface set_network $current_id ssid "\"$NETWORK\""
-        wpa_cli -i $iface set_network $current_id key_mgmt "NONE"
-        wpa_cli -i $iface set_network $current_id wep_tx_keyidx 0
-        wpa_cli -i $iface set_network $current_id wep_key0 "\"$WEPKEY\""
-    fi
-else	# Open
-    if [ $current_id -ge 0 ] ; then
-        echo "Use Open Network $NETWORK"
-    else
-        current_id=`wpa_cli -i $iface add_network | tail -1`
-        wpa_cli -i $iface set_network $current_id ssid "\"$NETWORK\""
-        wpa_cli -i $iface set_network $current_id key_mgmt "NONE"
-    fi
-fi
+#current_id=`check_network "$wifiName"`
+#if [ $current_id -ge 0 ] ; then
+#    echo "Connect to Network $wifiName"
+#    final $wifiName $current_id
+#fi
 
-final $NETWORK $current_id
+current_id=`wpa_cli -i $iface add_network | tail -1`
+wpa_cli -i $iface set_network $current_id ssid "\"$wifiName\""
+update_psk "$wifiName" "$wifiPass"
 
+echo "Debug: wifiName: $wifiName wifiPass: $wifiPass  current_id: $current_id"
+final $wifiName $current_id

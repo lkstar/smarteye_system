@@ -35,7 +35,7 @@ scan_user() {
     wName4=FAST_602
     wPass4=iamok_007
     wName5=TP-LINK_F3DE
-    wPass5=12345678
+    wPass5=13918614265
     wName6=test6
     wPass6=12345678
     flag=0

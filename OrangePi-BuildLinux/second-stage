@@ -171,13 +171,13 @@ start on stopped rc or RUNLEVEL=[12345]
 stop on runlevel [!12345]
 
 respawn
-exec /sbin/getty -L 115200 ttyS0 vt102
+exec /sbin/getty --autologin root -I "Auto Login as root ..." -L 115200 ttyS0 vt102
 _EOF_
 rm /etc/init/tty4.conf > /dev/null 2>&1
 rm /etc/init/tty5.conf > /dev/null 2>&1
 rm /etc/init/tty6.conf > /dev/null 2>&1
 else
-    echo "S0:23:respawn:/sbin/getty -L ttyS0 115200 vt102" >> /etc/inittab
+    echo "S0:23:respawn:/sbin/getty --autologin root -I \"Auto login as root ... \"-L ttyS0 115200 vt102" >> /etc/inittab
     ln -sf /usr/lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service | tee -a $_LOGFILE 2>&1
     ln -sf /usr/lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service | tee -a $_LOGFILE 2>&1
 fi

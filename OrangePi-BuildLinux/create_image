@@ -364,6 +364,44 @@ echo "tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0" >> $odir/etc/fstab
 
 sync
 
+echo ""
+
+# **********************************
+# Add user script in /etc/profile
+# *********************************
+if [ -f $odir/etc/profile ] ; then
+cat >> $odir/etc/profile << _EOF_
+
+echo " "
+echo "==================================================="
+echo " "
+
+if [ -b /dev/mmcblk1 ] ; then
+	sleep 3
+	echo "Current boot device is sdcard, install system image to eMMC ..."
+	/usr/local/bin/install_to_emmc
+else
+	echo "Current boot device is eMMC, not need install system image."
+fi
+
+if [ ! -b /dev/mmcblk1 ] ; then
+	echo " "
+	sleep 3
+	echo "Auto config WIFI network ..."
+	/usr/local/bin/wifimgr.sh
+fi
+
+echo " "
+echo "==================================================="
+echo " "
+_EOF_
+else
+	echo "Not found $odir/etc/profile"
+	echo "Error: Can't init user function in system booting ..."
+fi
+
+sync
+
 # ================================================
 # IF CREATING IMAGE unmount and create final image
 # ================================================

@@ -38,15 +38,15 @@ fi
 umount ${sdcard}* > /dev/null 2>&1
 #----------------------------------------------------------
 echo ""
-echo -n "WARNING: EMMC WILL BE ERASED !, Continue (y/N)?  "
-read -n 1 ANSWER
+echo "WARNING: EMMC WILL BE ERASED !, Continue (y/N)? y "
+#read -n 1 ANSWER
 
-if [ ! "${ANSWER}" = "y" ] ; then
-    echo "."
-    echo "Canceled.."
-    exit 0
-fi
-echo ""
+#if [ ! "${ANSWER}" = "y" ] ; then
+#    echo "."
+#    echo "Canceled.."
+#    exit 0
+#fi
+#echo ""
 #----------------------------------------------------------
 
 echo "Erasing EMMC ..."

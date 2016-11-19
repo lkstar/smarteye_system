@@ -14,9 +14,9 @@ ONLY_BASE="no"
 # Set hostname, user to be created                    *
 # and root and user passwords                         *
 # *****************************************************
-HOSTNAME="SmartEye"
-USER="ipc"
-ROOTPASS="root"
+HOSTNAME="smarteye"
+USER="root"
+ROOTPASS="ipc"
 USERPASS="ipc"
 
 

@@ -245,6 +245,7 @@ mv $odir/install.log ./install-${distro}.log | tee /dev/null 2>&1
 
 # === Copy scripts ========================
 cp fs_resize $odir/usr/local/bin
+cp wifimgr.sh $odir/usr/local/bin
 cp update_boot.sh $odir/usr/local/bin
 cp install_to_emmc $odir/usr/local/bin
 if [ ! "${ONLY_BASE}" = "yes" ] ; then

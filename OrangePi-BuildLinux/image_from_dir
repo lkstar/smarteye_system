@@ -157,6 +157,7 @@ cp orange/boot0_OPI.fex $odir/boot | tee /dev/null 2>&1
 cp orange/u-boot_OPI*.fex $odir/boot | tee /dev/null 2>&1
 cp fs_resize $odir/usr/local/bin | tee /dev/null 2>&1
 cp wifimgr.sh $odir/usr/local/bin | tee /dev/null 2>&1
+cp check_nwstatus.sh $odir/usr/local/bin | tee /dev/null 2>&1
 cp update_kernel.sh $odir/usr/local/bin | tee /dev/null 2>&1
 cp install_* $odir/usr/local/bin | tee /dev/null 2>&1
 if [ "${3}" = "noinstallscr" ] || [ "${4}" = "noinstallscr" ] || [ "${5}" = "noinstallscr" ]; then

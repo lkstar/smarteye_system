@@ -7,111 +7,7 @@
 # Author: gihnius@gmail.com
 #
 
-# default wlan
-#iface=wlan0
-iface=`ifconfig | grep -e ^w -e ^W | awk '{print $1}'`
-# driver device
-dev=$(sysctl -n net.wlan.0.%parent)
-if ifconfig $dev >/dev/null 2>&1 ; then
-    phy_iface=$dev
-else
-    phy_iface=ath0
-fi
-# use system wpa_supplicant.conf
-wpa_supplicant_conf=/etc/wpa_supplicant.conf
-# network id -1 non exist
-current_id=-1
-# use default wpa_supplicant.conf
-use_conf=1
-
-
-scan_user() {
-    wName1=byxlk-server
-    wPass1=20060806
-    wName2=ligang
-    wPass2=12345678
-    wName3=MERCURY_9D6706
-    wPass3=iamok_007
-    wName4=FAST_602
-    wPass4=iamok_007
-    wName5=TP-LINK_F3DE
-    wPass5=13918614265
-    wName6=test6
-    wPass6=12345678
-    flag=0
-
-    wpa_lookup
-    wpa_cli -i $iface ap_scan 1
-    wpa_cli -i $iface scan
-
-    SCAN_RESULTS=`wpa_cli -i $iface scan_results`
-    sleep 1
-    SCAN_WIFI=`echo "$SCAN_RESULTS" | awk -F '\t' \
-    '/..:..:..:..:..:../ {printf "%s\n",$NF }'`
-    echo "$SCAN_WIFI" | grep -q "$wName1"
-    if [ $? -eq 0 ]; then
-        CurrentWifi=$wName1
-        CurrentPass=$wPass1
-        flag=1
-        echo "Connect wireless $CurrentWifi, PLS wait..."
-    fi
-	
-    echo "$SCAN_WIFI" | grep -q "$wName2"
-    if [ $? -eq 0 ]; then
-        CurrentWifi=$wName2
-        CurrentPass=$wPass2
-        flag=1
-        echo "Connect wireless $CurrentWifi, PLS wait..."
-    fi
-    
-    echo "$SCAN_WIFI" | grep -q "$wName3"
-    if [ $? -eq 0 ]; then
-        CurrentWifi=$wName3
-        CurrentPass=$wPass3
-        flag=1
-        echo "Connect wireless $CurrentWifi, PLS wait..."
-    fi
-    
-    echo "$SCAN_WIFI" | grep -q "$wName4"
-    if [ $? -eq 0 ]; then
-        CurrentWifi=$wName4
-        CurrentPass=$wPass4
-        flag=1
-        echo "Connect wireless $CurrentWifi, PLS wait..."
-    fi
-
-    echo "$SCAN_WIFI" | grep -q "$wName5"
-    if [ $? -eq 0 ]; then
-        CurrentWifi=$wName5
-        CurrentPass=$wPass5
-        flag=1
-        echo "Connect wireless $CurrentWifi, PLS wait..."
-    fi
-
-    echo "$SCAN_WIFI" | grep -q "$wName6"
-    if [ $? -eq 0 ]; then
-        CurrentWifi=$wName6
-        CurrentPass=$wPass6
-        flag=1
-        echo "Connect wireless $CurrentWifi, PLS wait..."
-    fi
-
-    if [ $flag -ne 1 ]; then
-        echo "Please configure the default WiFi information..."
-        exit 0
-    fi
-
-    current_id=`wpa_cli -i $iface add_network | tail -1`
-    wpa_cli -i $iface set_network $current_id ssid "\"$CurrentWifi\""
-    update_psk "$CurrentWifi" "$CurrentPass"
-
-    echo "Debug: wifiName: $CurrentWifi wifiPass: $CurrentPass  current_id: $current_id"
-    final $CurrentWifi $current_id
-
-    exit 0
-
-}
-
+####################################################################
 usage () {
     cat <<EOF
 Usage:
@@ -196,10 +92,10 @@ final () {
     wpa_cli -i $iface enable_network $nid
     wpa_cli -i $iface reconnect
     wpa_cli -i $iface save_config
-    sleep 1
-    dhclient   $iface
+    sleep 2 
+    dhclient $iface
 
-    exit 0
+	#exit 0
 }
 
 use_wificfg () {
@@ -219,14 +115,128 @@ use_wificfg () {
 }
 
 
-##################################################################################
+auto_connect_default_wifi() {
+    wName1=byxlk-server
+    wPass1=20060806
+    wName2=ligang
+    wPass2=12345678
+    wName3=MERCURY_9D6706
+    wPass3=iamok_007
+    wName4=FAST_602
+    wPass4=iamok_007
+    wName5=TP-LINK_F3DE
+    wPass5=13918614265
+    wName6=test6
+    wPass6=12345678
+    flag=0
 
-if [ $# -eq 0 ]; then
-    echo "Using the default configuration..."
-    scan_user
+    wpa_lookup
+    wpa_cli -i $iface ap_scan 1 
+    wpa_cli -i $iface scan 
+
+    SCAN_RESULTS=`wpa_cli -i $iface scan_results`
+    sleep 1
+    SCAN_WIFI=`echo "$SCAN_RESULTS" | awk -F '\t' \
+    '/..:..:..:..:..:../ {printf "%s\n",$NF }'`
+    echo "$SCAN_WIFI" | grep -q "$wName1"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName1
+        CurrentPass=$wPass1
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+	
+    echo "$SCAN_WIFI" | grep -q "$wName2"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName2
+        CurrentPass=$wPass2
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+    
+    echo "$SCAN_WIFI" | grep -q "$wName3"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName3
+        CurrentPass=$wPass3
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+    
+    echo "$SCAN_WIFI" | grep -q "$wName4"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName4
+        CurrentPass=$wPass4
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+
+    echo "$SCAN_WIFI" | grep -q "$wName5"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName5
+        CurrentPass=$wPass5
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+
+    echo "$SCAN_WIFI" | grep -q "$wName6"
+    if [ $? -eq 0 ]; then
+        CurrentWifi=$wName6
+        CurrentPass=$wPass6
+        flag=1
+        echo "Connect wireless $CurrentWifi, PLS wait..."
+    fi
+
+    if [ $flag -ne 1 ]; then
+        echo "Please configure the default WiFi information..."
+        exit 0
+    fi
+
+    current_id=`wpa_cli -i $iface add_network | tail -1`
+    wpa_cli -i $iface set_network $current_id ssid "\"$CurrentWifi\""
+    update_psk "$CurrentWifi" "$CurrentPass"
+
+    echo "[Debug Info] SSID: $CurrentWifi PW: $CurrentPass Index: $current_id"
+    final $CurrentWifi $current_id
+
+    #exit 0
+
+}
+##################################################################################
+# get wifi device name  wlan
+iface=`ifconfig | grep -e ^w -e ^W | awk '{print $1}'`
+if ifconfig $iface >/dev/null 2>&1 ; then
+	echo "Find wifi device:$iface"
+else
+	echo "not find wifi device, exit!"
+	exit 0;
 fi
 
+# driver device
+dev=$iface
+if ifconfig $dev >/dev/null 2>&1 ; then
+    phy_iface=$dev
+else
+    phy_iface=ath0
+fi
 
+# use system wpa_supplicant.conf
+wpa_supplicant_conf=/etc/wpa_supplicant.conf
+
+# network id -1 non exist
+current_id=-1
+
+# use default wpa_supplicant.conf
+use_conf=1
+
+# check input paras
+if [ $# -eq 0 ]; then
+    echo "Using the default configuration..."
+    auto_connect_default_wifi
+	ifconfig | grep Mask | grep -v 127.0.0.1 | awk '{print $2"  "$3"  "$4}'
+	exit 0
+fi
+
+# input paras parse
 case $1 in
     -C)
         if [ $# -ne 3 ];
@@ -253,6 +263,7 @@ case $1 in
         fi
         NETWORK=`wpa_cli -i $iface list | awk '{if($1=='"$current_id"'){print $2}}'`
         final $NETWORK $current_id
+		exit 0
         ;;
 #    reconfig)
 #        recfg_dev
@@ -327,5 +338,8 @@ current_id=`wpa_cli -i $iface add_network | tail -1`
 wpa_cli -i $iface set_network $current_id ssid "\"$wifiName\""
 update_psk "$wifiName" "$wifiPass"
 
-echo "Debug: wifiName: $wifiName wifiPass: $wifiPass  current_id: $current_id"
+echo "Debug: SSID: $wifiName PW: $wifiPass  Index: $current_id"
 final $wifiName $current_id
+
+exit 0
+##################### End #######################

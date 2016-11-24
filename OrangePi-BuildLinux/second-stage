@@ -87,12 +87,17 @@ cat > /etc/rc.local << _EOF_
 #
 # By default this script does nothing.
 
-#indicate network status by leds
+# indicate network status by leds
 /usr/local/bin/check_nwstatus.sh &
 
 echo 0 > /proc/sys/kernel/hung_task_timeout_secs
 
 dmesg -n 1
+
+# install camera drivers 
+if [ ! -b /dev/mmcblk1 ] ; then
+	/usr/local/bin/install_camera_ko
+fi
 
 _EOF_
 

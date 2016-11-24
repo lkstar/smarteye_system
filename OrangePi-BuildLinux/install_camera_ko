@@ -7,12 +7,12 @@ fi
 
 pwd="/lib/modules/3.4.112/kernel/drivers/media"
 
-echo ""
-date
-echo "********************"
-echo "Installing camera ko"
-echo "********************"
-echo ""
+#echo ""
+#date
+#echo "********************"
+#echo "Installing camera ko"
+#echo "********************"
+#echo ""
 
 insmod $pwd/video/videobuf-core.ko
 insmod $pwd/video/videobuf-dma-contig.ko
@@ -25,7 +25,7 @@ insmod $pwd/video/sunxi-vfe/vfe_v4l2.ko
 
 sleep 1
 echo ""
-echo "**************"
-echo "insmod OK....."
-echo "**************"
+echo "*******************************"
+echo "Insmod Camera Driver OK....."
+echo "*******************************"
 echo ""

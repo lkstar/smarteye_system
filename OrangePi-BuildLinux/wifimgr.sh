@@ -232,6 +232,10 @@ use_conf=1
 if [ $# -eq 0 ]; then
     echo "Using the default configuration..."
     auto_connect_default_wifi
+	currentip=`ifconfig | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}'| tr -d "addr:" | awk -F '.' '{print $1"."$2"."$3".250"}'`
+	ifconfig $iface $currentip
+	sleep 1
+	dhclient $iface
 	ifconfig | grep Mask | grep -v 127.0.0.1 | awk '{print $2"  "$3"  "$4}'
 	exit 0
 fi

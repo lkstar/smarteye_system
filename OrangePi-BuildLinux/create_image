@@ -383,13 +383,10 @@ if [ -b /dev/mmcblk1 ] ; then
 	/usr/local/bin/install_to_emmc
 else
 	echo "Current boot device is eMMC, not need install system image."
-fi
-
-if [ ! -b /dev/mmcblk1 ] ; then
 	echo " "
 	sleep 3
 	nw_ip=\`ifconfig | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}'| tr -d "addr:"\`
-	if [ ! \$nw_ip ] ; then
+	if [ "\$nw_ip" = "" ] ; then
 		echo "Auto config WIFI network ..."
 		/usr/local/bin/wifimgr.sh
 	fi
@@ -398,6 +395,7 @@ fi
 echo " "
 echo "==================================================="
 echo " "
+
 _EOF_
 else
 	echo "Not found $odir/etc/profile"
